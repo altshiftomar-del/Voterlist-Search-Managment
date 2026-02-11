@@ -11,6 +11,7 @@ interface AdminPanelProps {
 const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock }) => {
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newRole, setNewRole] = useState<UserRole>(UserRole.USER);
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -29,13 +30,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock
     const newUser: User = {
         username: newUsername,
         passwordHash: hash,
-        role: UserRole.USER,
+        role: newRole,
         isBlocked: false
     };
 
     onAddUser(newUser);
     setNewUsername('');
     setNewPassword('');
+    setNewRole(UserRole.USER);
     setIsCreating(false);
   };
 
@@ -53,6 +55,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock
                     value={newUsername}
                     onChange={e => setNewUsername(e.target.value)}
                     className="flex-1 p-2 border rounded focus:border-emerald-500 focus:outline-none"
+                    required
                 />
                 <input 
                     type="password" 
@@ -60,7 +63,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
                     className="flex-1 p-2 border rounded focus:border-emerald-500 focus:outline-none"
+                    required
                 />
+                <select 
+                    value={newRole}
+                    onChange={(e) => setNewRole(e.target.value as UserRole)}
+                    className="p-2 border rounded focus:border-emerald-500 focus:outline-none bg-white"
+                >
+                    <option value={UserRole.USER}>User</option>
+                    <option value={UserRole.ADMIN}>Admin</option>
+                </select>
                 <button 
                     type="submit" 
                     disabled={isCreating}
