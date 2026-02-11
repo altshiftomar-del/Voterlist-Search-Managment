@@ -1,5 +1,6 @@
 // @ts-nocheck
 const { useState, useRef } = window.React;
+const React = window.React;
 const { FileStatus } = window;
 const { CheckCircleIcon, FileIcon, LoaderIcon, PlusIcon, SearchIcon, TrashIcon } = window;
 

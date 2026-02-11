@@ -1,5 +1,6 @@
 // @ts-nocheck
 const { useState } = window.React;
+const React = window.React;
 const { UserRole } = window;
 const { hashPassword } = window.authService;
 

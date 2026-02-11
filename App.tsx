@@ -1,5 +1,6 @@
 // @ts-nocheck
-const { useEffect, useState } = window.React;
+const React = window.React;
+const { useEffect, useState } = React;
 const { HashRouter, Routes, Route, Navigate, useNavigate } = window.ReactRouterDOM;
 const { Navbar, Modal, Dashboard, AdminPanel, PDFSearchViewer } = window;
 const { UserRole, FileStatus } = window;

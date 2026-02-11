@@ -1,5 +1,6 @@
 // @ts-nocheck
 const { useState } = window.React;
+const React = window.React;
 const { SearchIcon, LoaderIcon } = window;
 
 window.PDFSearchViewer = ({ file, onClose }) => {

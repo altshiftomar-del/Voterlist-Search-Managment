@@ -1,6 +1,7 @@
 // @ts-nocheck
 const { createRoot } = window.ReactDOM;
 const { App } = window;
+const React = window.React;
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
