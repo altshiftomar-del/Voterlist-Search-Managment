@@ -102,34 +102,37 @@ const PDFSearchViewer: React.FC<PDFSearchViewerProps> = ({ file, onClose }) => {
                 </ul>
             </div>
 
-            {/* Main PDF Area (Iframe/Canvas Mock) */}
-            <div className="flex-1 overflow-auto flex justify-center p-4 sm:p-8 relative">
-                <div className="bg-white shadow-2xl w-full max-w-4xl min-h-[800px] p-8 sm:p-12 relative">
-                    {/* Simulated PDF Content */}
-                    <div className="border-b-2 border-black mb-8 pb-4 text-center">
-                        <h1 className="text-2xl font-bold font-serif mb-2">ভোটার তালিকা - ২০২৪</h1>
-                        <p className="text-sm font-serif">{file.metadata.district}, {file.metadata.upazila}, {file.metadata.union}</p>
-                        <p className="text-sm font-serif">ওয়ার্ড: {file.metadata.ward} | {file.name.split('/').pop()}</p>
-                    </div>
+            {/* Main PDF Area (Iframe or Mock) */}
+            <div className="flex-1 overflow-auto flex justify-center p-0 relative bg-gray-500">
+                {file.fileData ? (
+                    <iframe 
+                        src={file.fileData} 
+                        className="w-full h-full border-0" 
+                        title="PDF Viewer"
+                    />
+                ) : (
+                    <div className="bg-white shadow-2xl w-full max-w-4xl min-h-[800px] p-8 sm:p-12 relative m-8">
+                        {/* Simulated PDF Content */}
+                        <div className="border-b-2 border-black mb-8 pb-4 text-center">
+                            <h1 className="text-2xl font-bold font-serif mb-2">ভোটার তালিকা - ২০২৪</h1>
+                            <p className="text-sm font-serif">{file.metadata.district}, {file.metadata.upazila}, {file.metadata.union}</p>
+                            <p className="text-sm font-serif">ওয়ার্ড: {file.metadata.ward} | {file.name.split('/').pop()}</p>
+                        </div>
 
-                    <div className="space-y-6 font-serif text-sm text-gray-800 opacity-60 select-none cursor-not-allowed">
-                        {/* Fake Content Blur */}
-                        <p>1. নাম: রহিম উদ্দিন, পিতা: করিম উদ্দিন, গ্রাম: {file.metadata.para}, এনআইডি: ৮৭৩২৪৯৮৭৩২৪...</p>
-                        <p>2. নাম: জব্বার আলী, পিতা: সোবহান আলী, গ্রাম: {file.metadata.para}, এনআইডি: ১২৩১২৩১২৩১২...</p>
-                        <div className="h-4 bg-gray-200 w-3/4 rounded"></div>
-                        <div className="h-4 bg-gray-200 w-full rounded"></div>
-                        <div className="h-4 bg-gray-200 w-5/6 rounded"></div>
-                        <br/>
-                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded text-center text-gray-600">
-                            (এটি একটি ডেমো ভিউয়ার। আসল অ্যাপ্লিকেশনে এখানে পিডিএফ রেন্ডার হবে।)
+                        <div className="space-y-6 font-serif text-sm text-gray-800 opacity-60 select-none cursor-not-allowed">
+                            {/* Fake Content Blur */}
+                            <p>1. নাম: রহিম উদ্দিন, পিতা: করিম উদ্দিন, গ্রাম: {file.metadata.para}, এনআইডি: ৮৭৩২৪৯৮৭৩২৪...</p>
+                            <p>2. নাম: জব্বার আলী, পিতা: সোবহান আলী, গ্রাম: {file.metadata.para}, এনআইডি: ১২৩১২৩১২৩১২...</p>
+                            <div className="h-4 bg-gray-200 w-3/4 rounded"></div>
+                            <div className="h-4 bg-gray-200 w-full rounded"></div>
+                            <div className="h-4 bg-gray-200 w-5/6 rounded"></div>
+                            <br/>
+                            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded text-center text-gray-600">
+                                (পিডিএফ ফাইলটি পাওয়া যায়নি বা ব্রাউজার রিফ্রেশ করা হয়েছে। নতুন করে আপলোড করুন।)
+                            </div>
                         </div>
                     </div>
-                    
-                    {/* Simulated Search Overlay Highlight */}
-                    {results.length > 0 && (
-                        <div className="absolute top-[200px] left-[10%] w-[80%] h-12 bg-yellow-300 opacity-30 border-2 border-yellow-600 animate-pulse pointer-events-none"></div>
-                    )}
-                </div>
+                )}
             </div>
         </div>
     </div>

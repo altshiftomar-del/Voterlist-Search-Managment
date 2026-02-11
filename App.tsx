@@ -65,6 +65,7 @@ const AppContent: React.FC = () => {
       const storedFiles = localStorage.getItem('voter_app_files');
       if (storedFiles) {
         try {
+            // Restore files but fileData (Blob URLs) cannot be restored from localStorage
             setFiles(JSON.parse(storedFiles));
         } catch (e) {
             console.error("Failed to parse files", e);
@@ -82,9 +83,10 @@ const AppContent: React.FC = () => {
     }
   }, [users]);
 
-  // Persist Files
+  // Persist Files (Exclude fileData to avoid quota limits and invalid URLs)
   useEffect(() => {
-     localStorage.setItem('voter_app_files', JSON.stringify(files));
+     const filesToStore = files.map(f => ({ ...f, fileData: null }));
+     localStorage.setItem('voter_app_files', JSON.stringify(filesToStore));
   }, [files]);
 
   // --- Handlers ---
@@ -140,7 +142,7 @@ const AppContent: React.FC = () => {
             uploadDate: Date.now(),
             uploadedBy: currentUser.username,
             status: FileStatus.UPLOADING,
-            fileData: null, // In a real app, this would be the URL. Here we simulate.
+            fileData: URL.createObjectURL(fo.file), // Create object URL for iframe
             metadata: { ...metadata, type: fo.type }
         };
     });
