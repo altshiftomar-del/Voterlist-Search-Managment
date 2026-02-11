@@ -1,37 +1,32 @@
-import React, { useState, useRef } from 'react';
-import { FileStatus, VoterFile } from '../types';
-import { CheckCircleIcon, FileIcon, LoaderIcon, PlusIcon, SearchIcon, TrashIcon } from './Icons';
+// @ts-nocheck
+const { useState, useRef } = window.React;
+const { FileStatus } = window;
+const { CheckCircleIcon, FileIcon, LoaderIcon, PlusIcon, SearchIcon, TrashIcon } = window;
 
-interface DashboardProps {
-  files: VoterFile[];
-  onUpload: (metadata: any, fileObjects: { type: string, file: File }[]) => void;
-  onSelectFile: (file: VoterFile) => void;
-}
-
-const Dashboard: React.FC<DashboardProps> = ({ files, onUpload, onSelectFile }) => {
+window.Dashboard = ({ files, onUpload, onSelectFile }) => {
   const [district, setDistrict] = useState('রংপুর');
   const [upazila, setUpazila] = useState('বদরগঞ্জ');
   const [union, setUnion] = useState('বদরগঞ্জ পৌরসভা');
   const [ward, setWard] = useState('১');
   const [para, setPara] = useState('কলেজপাড়া');
   
-  const [maleFile, setMaleFile] = useState<File | null>(null);
-  const [femaleFile, setFemaleFile] = useState<File | null>(null);
-  const [otherFiles, setOtherFiles] = useState<{ id: number, file: File | null }[]>([]);
+  const [maleFile, setMaleFile] = useState(null);
+  const [femaleFile, setFemaleFile] = useState(null);
+  const [otherFiles, setOtherFiles] = useState([]);
 
   // Ref to clear inputs
-  const maleInputRef = useRef<HTMLInputElement>(null);
-  const femaleInputRef = useRef<HTMLInputElement>(null);
+  const maleInputRef = useRef(null);
+  const femaleInputRef = useRef(null);
 
   const handleAddOther = () => {
     setOtherFiles([...otherFiles, { id: Date.now(), file: null }]);
   };
 
-  const handleOtherFileChange = (id: number, file: File | null) => {
+  const handleOtherFileChange = (id, file) => {
     setOtherFiles(otherFiles.map(f => f.id === id ? { ...f, file } : f));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!maleFile && !femaleFile && otherFiles.every(f => !f.file)) {
       alert("অন্তত একটি ফাইল আপলোড করুন");
@@ -197,5 +192,3 @@ const Dashboard: React.FC<DashboardProps> = ({ files, onUpload, onSelectFile }) 
     </div>
   );
 };
-
-export default Dashboard;

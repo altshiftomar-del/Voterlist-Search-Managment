@@ -1,19 +1,14 @@
-import React, { useState } from 'react';
-import { VoterFile, SearchResult } from '../types';
-import { SearchIcon, LoaderIcon } from './Icons';
+// @ts-nocheck
+const { useState } = window.React;
+const { SearchIcon, LoaderIcon } = window;
 
-interface PDFSearchViewerProps {
-  file: VoterFile;
-  onClose: () => void;
-}
-
-const PDFSearchViewer: React.FC<PDFSearchViewerProps> = ({ file, onClose }) => {
+window.PDFSearchViewer = ({ file, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState([]);
   
   // Mock search logic
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
 
@@ -23,7 +18,7 @@ const PDFSearchViewer: React.FC<PDFSearchViewerProps> = ({ file, onClose }) => {
     // Simulate search delay and finding results
     setTimeout(() => {
       // Mock results based on search term length to simulate variation
-      const mockResults: SearchResult[] = [];
+      const mockResults = [];
       const count = Math.max(1, Math.floor(Math.random() * 5)); 
       
       for(let i=0; i<count; i++) {
@@ -38,7 +33,7 @@ const PDFSearchViewer: React.FC<PDFSearchViewerProps> = ({ file, onClose }) => {
     }, 1000);
   };
 
-  const handleResultClick = (result: SearchResult) => {
+  const handleResultClick = (result) => {
     // In a real implementation with pdf.js, this would scroll the canvas/div
     alert(`পিডিএফ এর পৃষ্ঠা ${result.page} এ যাওয়া হচ্ছে...`);
   };
@@ -138,5 +133,3 @@ const PDFSearchViewer: React.FC<PDFSearchViewerProps> = ({ file, onClose }) => {
     </div>
   );
 };
-
-export default PDFSearchViewer;

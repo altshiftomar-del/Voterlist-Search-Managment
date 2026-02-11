@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Modal from './components/Modal';
-import Dashboard from './components/Dashboard';
-import AdminPanel from './components/AdminPanel';
-import PDFSearchViewer from './components/PDFSearchViewer';
-import { User, UserRole, VoterFile, FileStatus } from './types';
-import { verifyPassword, hashPassword } from './services/authService';
+// @ts-nocheck
+const { useEffect, useState } = window.React;
+const { HashRouter, Routes, Route, Navigate, useNavigate } = window.ReactRouterDOM;
+const { Navbar, Modal, Dashboard, AdminPanel, PDFSearchViewer } = window;
+const { UserRole, FileStatus } = window;
+const { verifyPassword, hashPassword } = window.authService;
 
 // Initial constants
 const ADMIN_PHONE = '01737654555';
 const ADMIN_PASS_RAW = 'Votarlist#$%^&';
 
-const AppContent: React.FC = () => {
+const AppContent = () => {
   // --- State ---
-  const [users, setUsers] = useState<User[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [files, setFiles] = useState<VoterFile[]>([]);
-  const [viewingFile, setViewingFile] = useState<VoterFile | null>(null);
+  const [files, setFiles] = useState([]);
+  const [viewingFile, setViewingFile] = useState(null);
   
   // Login Form State
   const [loginUser, setLoginUser] = useState('');
@@ -34,7 +31,7 @@ const AppContent: React.FC = () => {
       const adminHash = await hashPassword(ADMIN_PASS_RAW);
       const storedUsers = localStorage.getItem('voter_app_users');
       
-      let appUsers: User[] = [];
+      let appUsers = [];
       if (storedUsers) {
         try {
           appUsers = JSON.parse(storedUsers);
@@ -45,7 +42,7 @@ const AppContent: React.FC = () => {
       
       // Ensure Admin exists and is updated
       const adminIndex = appUsers.findIndex(u => u.username === ADMIN_PHONE);
-      const adminUser: User = { 
+      const adminUser = { 
         username: ADMIN_PHONE, 
         passwordHash: adminHash, 
         role: UserRole.ADMIN, 
@@ -91,7 +88,7 @@ const AppContent: React.FC = () => {
 
   // --- Handlers ---
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
 
@@ -129,10 +126,10 @@ const AppContent: React.FC = () => {
       navigate('/');
   };
 
-  const handleUpload = (metadata: any, fileObjects: { type: string, file: File }[]) => {
+  const handleUpload = (metadata, fileObjects) => {
     if (!currentUser) return;
 
-    const newFiles: VoterFile[] = fileObjects.map(fo => {
+    const newFiles = fileObjects.map(fo => {
         // Construct name: #District:Upazila:Union:Ward:Para/Type
         const name = `#${metadata.district}:${metadata.upazila}:${metadata.union}:ওয়ার্ড-${metadata.ward}:${metadata.para}/${fo.type}`.replace(/\s+/g, '-');
         
@@ -163,11 +160,11 @@ const AppContent: React.FC = () => {
     });
   };
 
-  const handleAddUser = (newUser: User) => {
+  const handleAddUser = (newUser) => {
     setUsers([...users, newUser]);
   };
 
-  const handleToggleBlock = (username: string) => {
+  const handleToggleBlock = (username) => {
     if (username === ADMIN_PHONE) return; // Prevent blocking admin
     setUsers(users.map(u => u.username === username ? { ...u, isBlocked: !u.isBlocked } : u));
   };
@@ -259,12 +256,10 @@ const AppContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
+window.App = () => {
     return (
         <HashRouter>
             <AppContent />
         </HashRouter>
     );
 }
-
-export default App;

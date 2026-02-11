@@ -1,6 +1,6 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App';
+// @ts-nocheck
+const { createRoot } = window.ReactDOM;
+const { App } = window;
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

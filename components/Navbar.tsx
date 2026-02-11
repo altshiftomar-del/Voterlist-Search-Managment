@@ -1,15 +1,10 @@
-import React from 'react';
-import { ScalesIcon } from './Icons';
-import { User, UserRole } from '../types';
-import { useNavigate } from 'react-router-dom';
+// @ts-nocheck
+const React = window.React;
+const { useNavigate } = window.ReactRouterDOM;
+const { ScalesIcon } = window;
+const { UserRole } = window;
 
-interface NavbarProps {
-  onLoginClick: () => void;
-  currentUser: User | null;
-  onLogout: () => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ onLoginClick, currentUser, onLogout }) => {
+window.Navbar = ({ onLoginClick, currentUser, onLogout }) => {
   const navigate = useNavigate();
 
   return (
@@ -61,5 +56,3 @@ const Navbar: React.FC<NavbarProps> = ({ onLoginClick, currentUser, onLogout }) 
     </header>
   );
 };
-
-export default Navbar;

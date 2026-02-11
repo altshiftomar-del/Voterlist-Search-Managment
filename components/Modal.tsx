@@ -1,13 +1,7 @@
-import React from 'react';
+// @ts-nocheck
+const { React } = window;
 
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-  title?: string;
-}
-
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
+window.Modal = ({ isOpen, onClose, children, title }) => {
   if (!isOpen) return null;
 
   return (
@@ -26,5 +20,3 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
     </div>
   );
 };
-
-export default Modal;

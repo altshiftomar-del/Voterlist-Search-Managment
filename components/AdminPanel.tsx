@@ -1,20 +1,15 @@
-import React, { useState } from 'react';
-import { User, UserRole } from '../types';
-import { hashPassword } from '../services/authService';
+// @ts-nocheck
+const { useState } = window.React;
+const { UserRole } = window;
+const { hashPassword } = window.authService;
 
-interface AdminPanelProps {
-  users: User[];
-  onAddUser: (user: User) => void;
-  onToggleBlock: (username: string) => void;
-}
-
-const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock }) => {
+window.AdminPanel = ({ users, onAddUser, onToggleBlock }) => {
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [newRole, setNewRole] = useState<UserRole>(UserRole.USER);
+  const [newRole, setNewRole] = useState(UserRole.USER);
   const [isCreating, setIsCreating] = useState(false);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = async (e) => {
     e.preventDefault();
     if(!newUsername || !newPassword) return;
 
@@ -27,7 +22,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock
     setIsCreating(true);
     const hash = await hashPassword(newPassword);
     
-    const newUser: User = {
+    const newUser = {
         username: newUsername,
         passwordHash: hash,
         role: newRole,
@@ -67,7 +62,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock
                 />
                 <select 
                     value={newRole}
-                    onChange={(e) => setNewRole(e.target.value as UserRole)}
+                    onChange={(e) => setNewRole(e.target.value)}
                     className="p-2 border rounded focus:border-emerald-500 focus:outline-none bg-white"
                 >
                     <option value={UserRole.USER}>User</option>
@@ -131,5 +126,3 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ users, onAddUser, onToggleBlock
     </div>
   );
 };
-
-export default AdminPanel;
