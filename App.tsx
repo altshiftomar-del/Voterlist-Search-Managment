@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Modal from './components/Modal';
 import Dashboard from './components/Dashboard';
@@ -25,7 +25,7 @@ const AppContent: React.FC = () => {
   const [loginPass, setLoginPass] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  const location = useLocation();
+  const navigate = useNavigate();
 
   // --- Initialization ---
   useEffect(() => {
@@ -36,7 +36,11 @@ const AppContent: React.FC = () => {
       
       let appUsers: User[] = [];
       if (storedUsers) {
-        appUsers = JSON.parse(storedUsers);
+        try {
+          appUsers = JSON.parse(storedUsers);
+        } catch (e) {
+          console.error("Failed to parse users", e);
+        }
       }
       
       // Ensure Admin exists and is updated
@@ -51,6 +55,7 @@ const AppContent: React.FC = () => {
       if (adminIndex === -1) {
         appUsers.push(adminUser);
       } else {
+        // Update admin password if it changed in code
         appUsers[adminIndex] = adminUser;
       }
       
@@ -59,7 +64,11 @@ const AppContent: React.FC = () => {
       // 2. Load Mock Files
       const storedFiles = localStorage.getItem('voter_app_files');
       if (storedFiles) {
-        setFiles(JSON.parse(storedFiles));
+        try {
+            setFiles(JSON.parse(storedFiles));
+        } catch (e) {
+            console.error("Failed to parse files", e);
+        }
       }
     };
 
@@ -102,9 +111,20 @@ const AppContent: React.FC = () => {
         setIsLoginOpen(false);
         setLoginUser('');
         setLoginPass('');
+        // Redirect if admin
+        if(user.role === UserRole.ADMIN) {
+            navigate('/omarfaruk');
+        } else {
+            navigate('/');
+        }
     } else {
         setLoginError('ভুল ইউজার বা পাসওয়ার্ড');
     }
+  };
+
+  const handleLogout = () => {
+      setCurrentUser(null);
+      navigate('/');
   };
 
   const handleUpload = (metadata: any, fileObjects: { type: string, file: File }[]) => {
@@ -146,6 +166,7 @@ const AppContent: React.FC = () => {
   };
 
   const handleToggleBlock = (username: string) => {
+    if (username === ADMIN_PHONE) return; // Prevent blocking admin
     setUsers(users.map(u => u.username === username ? { ...u, isBlocked: !u.isBlocked } : u));
   };
 
@@ -156,7 +177,7 @@ const AppContent: React.FC = () => {
       <Navbar 
         onLoginClick={() => setIsLoginOpen(true)} 
         currentUser={currentUser} 
-        onLogout={() => setCurrentUser(null)}
+        onLogout={handleLogout}
       />
 
       <main className="flex-1 container mx-auto px-4 py-8 relative">
@@ -165,12 +186,20 @@ const AppContent: React.FC = () => {
                 currentUser ? (
                    <Dashboard files={files} onUpload={handleUpload} onSelectFile={setViewingFile} />
                 ) : (
-                    <div className="text-center mt-20">
-                        <h2 className="text-3xl font-bold text-gray-700 mb-4">ভোটার লিস্ট ম্যানেজমেন্ট সিস্টেম</h2>
-                        <p className="text-gray-500 mb-8">অনুগ্রহ করে লগইন করুন</p>
-                        <button onClick={() => setIsLoginOpen(true)} className="bg-emerald-600 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:bg-emerald-700 transition">
-                            লগইন করুন
-                        </button>
+                    <div className="flex flex-col items-center justify-center mt-20 text-center animate-fade-in">
+                        <div className="bg-white p-10 rounded-xl shadow-2xl max-w-lg w-full">
+                            <h2 className="text-3xl font-bold text-emerald-800 mb-4">ভোটার লিস্ট অনুসন্ধান</h2>
+                            <p className="text-gray-600 mb-8 leading-relaxed">
+                                ডিজিটাল ভোটার লিস্ট ম্যানেজমেন্ট সিস্টেমে আপনাকে স্বাগতম। 
+                                ভোটার লিস্ট আপলোড এবং অনুসন্ধান করতে লগইন করুন।
+                            </p>
+                            <button 
+                                onClick={() => setIsLoginOpen(true)} 
+                                className="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-emerald-700 hover:shadow-xl transition transform hover:-translate-y-1"
+                            >
+                                লগইন করুন
+                            </button>
+                        </div>
                     </div>
                 )
             } />
@@ -186,33 +215,36 @@ const AppContent: React.FC = () => {
 
       {/* Login Modal */}
       <Modal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} title="সিস্টেম লগইন">
-         <div className="mb-4 bg-yellow-50 p-3 rounded border border-yellow-200 text-sm text-yellow-800">
-            পাসওয়ার্ড এর জন্য আপনার নিকটস্থ <strong>উপজেলা জামায়াত</strong> কর্তৃপক্ষের সাথে যোগাযোগ করুন।
+         <div className="mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded text-sm text-amber-900">
+            <p className="font-bold">পাসওয়ার্ড প্রয়োজন?</p>
+            <p>আপনার নিকটস্থ <strong className="text-amber-800">উপজেলা জামায়াত</strong> কর্তৃপক্ষের সাথে যোগাযোগ করুন।</p>
          </div>
-         <form onSubmit={handleLogin} className="space-y-4">
+         <form onSubmit={handleLogin} className="space-y-5">
             <div>
-                <label className="block text-sm font-medium text-gray-700">ইউজার আইডি / মোবাইল</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">ইউজার আইডি / মোবাইল</label>
                 <input 
                     type="text" 
                     value={loginUser} 
                     onChange={e => setLoginUser(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 border p-2"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+                    placeholder="01xxxxxxxxx"
                     required
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">পাসওয়ার্ড</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড</label>
                 <input 
                     type="password" 
                     value={loginPass} 
                     onChange={e => setLoginPass(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 border p-2"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+                    placeholder="********"
                     required
                 />
             </div>
-            {loginError && <p className="text-red-600 text-sm">{loginError}</p>}
-            <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-2 rounded hover:bg-emerald-700 transition">
-                লগইন
+            {loginError && <div className="p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{loginError}</div>}
+            <button type="submit" className="w-full bg-emerald-700 text-white font-bold py-3 rounded-lg hover:bg-emerald-800 transition duration-200 shadow-md">
+                লগইন করুন
             </button>
          </form>
       </Modal>
