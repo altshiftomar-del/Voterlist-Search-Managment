@@ -1,0 +1,5 @@
+{
+  "name": "VoterList Pro BD",
+  "description": "A React application for managing, uploading, and searching voter lists with Bangla OCR simulation and admin management features.",
+  "requestFramePermissions": []
+}
